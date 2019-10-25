@@ -72,7 +72,7 @@ istream& operator>>(istream& input, Matrix &matrix)
 	return input;
 }
 
-ostream& operator<<(ostream& output , Matrix matrix)
+ostream& operator<<(ostream& output , const Matrix matrix)
 {
 	cout << "_______________Your Matrix__________________\n";
 	for (int i = 0; i < matrix.row; i++)
@@ -212,20 +212,8 @@ Thuật toán tìm ma trận phụ hợp là
 Adj(A) = -1^(i+j) * Dij
 Tức là ta lần lượt bỏ từng dòng và cột của ma trận A sau đó Tính định thức của ma trận sau khi bỏ dòng và cột đó
 rồi lấy định thức đó nhân với -1^(dòng + cột) là ra được phần tử thứ ij(phần tử tại vị trí dòng và cột đó)
-ví dụ :
-A = [[a11 , a12 , a13]
-	 [a21 , a22 , a23]
-	 [a31 , a32 , a33]]
 
-Thì Adj(A) = 
-				
-			[[A11 , A12 , A13]
-			 [A21 , A22 , A23]
-			 [A31 , A32 , A33]]
-	Với A11=-1(1+1) * D11 
-	    A12 = -1(1+2) * D12
-		A13 = -1(1+3) * D13
-	với D11 D12 D13 là định thức mà bỏ đi các dòng-cột : 1-1 , 1-2 , 1-3.
+ví dụ cụ thể được thể hiện chi tiết trong bài báo cáo.
 
 */
 
@@ -285,10 +273,7 @@ Matrix Matrix::FindAdj()
 							}
 							dong++;
 						}
-
 					}
-
-
 					//Hệ số -1(i+j)
 					int somu = c + d;
 					int heso;
@@ -296,12 +281,8 @@ Matrix Matrix::FindAdj()
 						heso = 1;
 					else
 						heso = -1;
-
 					//Trả về ma trận phụ hợp
 					temp.matrix[d][c] = heso * Det(subMatrix, cot);
-
-					//cout << endl;
-
 					delete[] subMatrix;
 				}
 			}
@@ -392,6 +373,48 @@ Matrix Matrix::operator*(const Matrix b)
 
 
 
+
+//Swapline : hỗ trợ việc đổi dòng matrix nhiều số 0
+
+
+
+/*
+Thuật toán tìm hạng của ma trận:
+
+Đầu tiên ta sẽ biến nó về dạng ma trận bậc thang như sau:
+a b c d
+0 x y z
+0 0 j k
+0 0 0 p
+
+đó là một dạng của ma trận bậc thang(thật ra ma trận bậc thang có nhiều dàng)
+Và hạng của nó = số dòng khác 0 của ma trận ấy.
+
+*/
+
+
+
+//Tìm vị trí cột đầu tiên !=0 của line 1
+int FirstCol(double** matrix, int line, int col)
+{
+	for (int i = 0; i < col; i++)
+	{
+		if (matrix[line][i] != 0)
+			return i;
+	}
+	return 0;
+}
+//Kiểm tra xem dòng đó có toàn số 0 không
+bool isFullZero(double** matrix, int line, int col)
+{
+	for (int j = 0; j < col; j++)
+	{
+		if (matrix[line][j] != 0)
+			return false;
+
+	}
+	return true;
+}
 //Đếm số dòng khác 0 trong matrix hỗ trợ việc tính rank
 int DemSoDongKhac0(double** matrix, int row, int col)
 {
@@ -414,7 +437,7 @@ int DemSoDongKhac0(double** matrix, int row, int col)
 	return row - count;
 }
 //Tính số lượng số 0 có trong dòng đó (từ đầu line cho đến khi gặp số !=0)
-int CalcZero(double **matrix , int col  , int line)
+int CalcZero(double** matrix, int col, int line)
 {
 	int sum = 0;
 	for (int j = 0; j < col; j++)
@@ -428,21 +451,10 @@ int CalcZero(double **matrix , int col  , int line)
 	}
 	return sum;
 }
-//Kiểm tra xem dòng đó có toàn số 0 không
-bool isFullZero(double** matrix, int line, int col)
-{
-	for (int j = 0; j < col; j++)
-	{
-		if (matrix[line][j] != 0)
-			return false;
 
-	}
-	return true;
-}
-//Swapline : hỗ trợ việc đổi dòng matrix nhiều số 0
 void SwapLine(double** matrix, int row, int col)
 {
-	for (int i = 0; i < row-1; i++)
+	for (int i = 0; i < row - 1; i++)
 	{
 		for (int j = i + 1; j < row; j++)
 		{
@@ -457,33 +469,7 @@ void SwapLine(double** matrix, int row, int col)
 		}
 	}
 }
-//Tìm vị trí cột đầu tiên !=0 của line 1
-int FirstCol(double** matrix, int line ,int col)
-{
-	for (int i = 0; i < col; i++)
-	{
-		if (matrix[line][i] != 0)
-			return i;
-	}
-	return 0;
-}
 
-
-/*
-Thuật toán tìm hạng của ma trận:
-
-Đầu tiên ta sẽ biến nó về dạng ma trận bậc thang như sau:
-a b c d
-0 x y z
-0 0 j k
-0 0 0 p
-
-đó là một dạng của ma trận bậc thang(thật ra ma trận bậc thang có nhiều dàng)
-Và hạng của nó = số dòng khác 0 của ma trận ấy.
-
-*/
-
-//Hàm chuyển về ma trận bậc thang :
 
 double**ChuyenVeBacThang(double** matrix, int row, int col)
 {
@@ -510,6 +496,7 @@ double**ChuyenVeBacThang(double** matrix, int row, int col)
 	}
 	return matrix;
 }
+
 
 int  Matrix::Rank()
 {
@@ -541,21 +528,45 @@ int  Matrix::Rank()
 	//Bắt đầu tính hạng của ma trận = số dòng khác 0 của ma trận = số dòng - số dòng(=0);
 }
 
+int  Matrix::Rank(double** matrix , int d , int c)
+{
+	//Tạo ma trận với , mọi thao tác sẽ thực hiện trên biến matrix tạm(tránh thay đổi giá trị)
+	double** matrixtemp;
+	CreateNewMatrix(matrixtemp, d, c);
+	//Gán bằng với matrix hiện tại của class:
+	for (int i = 0; i < d; i++)
+	{
+		for (int j = 0; j < c; j++)
+		{
+			matrixtemp[i][j] = matrix[i][j];
+		}
+	}
+
+	//Gọi hàm thay đổi thứ tự các dòng
+	SwapLine(matrixtemp, d, c);
+
+	//Gọi hàm chuyển về ma trận bậc thang
+	matrixtemp = ChuyenVeBacThang(matrixtemp, d, c);
+
+
+
+	int Rank = DemSoDongKhac0(matrixtemp, d, c);
+	delete matrixtemp;
+
+	return Rank;
+
+	//Bắt đầu tính hạng của ma trận = số dòng khác 0 của ma trận = số dòng - số dòng(=0);
+}
+
 //Hàm chuyển số qua chuỗi
 string Tostring(int n)
 {
 	return std::to_string(n);
 }
 
-//float SumHeSo(float* a , int n)
-//{
-//	float sum = 0;
-//	for (int i = 0; i < n; i++)
-//	{
-//		sum += a[i];
-//	}
-//	return sum;
-//}
+
+
+
 
 //Đây là hàm hộ trợ tìm nghiệm sau khi chuyển về ma trận bậc thang
 void TimNghiem(double** matrix, int dong, int cot)
@@ -563,9 +574,9 @@ void TimNghiem(double** matrix, int dong, int cot)
 
 	int rank = DemSoDongKhac0(matrix, dong, dong);
 
-	//_______________________________________________________________________________ TRƯỜNG HỢP HỆ CÓ DUY VÔ NGHIỆM_______________________________________________________________________________
+	//_______________________________________________________________________________ TRƯỜNG HỢP HỆ VÔ NGHIỆM_______________________________________________________________________________
 
-	if (rank < dong && matrix[dong - 1][cot - 1] != 0)
+	if ((rank < dong && matrix[dong - 1][cot - 1] != 0) || (dong > cot-1 && matrix[dong - 1][cot - 1] != 0))
 	{
 		cout << "He vo nghiem" << endl;
 		return;
@@ -599,7 +610,7 @@ void TimNghiem(double** matrix, int dong, int cot)
 			}
 		}
 		for (int i = 0; i < n; i++)
-			cout << a[i] << "\t";
+			cout << "X" << n-i << " = "  << a[i] << "\n";
 		delete[] a;
 	}
 
@@ -657,17 +668,11 @@ void TimNghiem(double** matrix, int dong, int cot)
 	{
 		//Chuỗi nghiệm mục đích là để xuất ra những nghiệm mà ta tìm được
 		string* ChuoiNghiem = new string[dong + 1];
-		ChuoiNghiem[0] = "u1";
 		int soNghiemTuDo = 1;  //Đánh dấu nghiệm để xuất ra
 		int nghiemThuN = 1;
 
 		int slNghiem = dong - rank;
-		for (int i = soNghiemTuDo; i < slNghiem; i++)
-		{
-			ChuoiNghiem[i] = "u" + to_string(i + 1);
-			nghiemThuN++;
-
-		}
+		
 		//Dùng để đánh dấu các hệ số t
 		float* hesoT = new float[dong + 1];
 		float* hesoTam = new float[dong + 1];
@@ -680,34 +685,75 @@ void TimNghiem(double** matrix, int dong, int cot)
 		//Mảng a dùng để lưu các nghiệm
 		float* a = new float[dong];
 		//Gán các biến tự do = 0 hỗ trợ ta trong việc tách phần số và phần biến riêng
-		a[0] = 0;
 		int n = 1;
 
 		int c;
+
+		bool isStartZero = true;
+		
 		//Tìm dòng khác 0 đầu tiên
 		for (int i = dong - 2; i >= 0; i--)
 		{
 			//Nếu dòng đó toàn số 0 thì tăng biến tự do lên 1.
-			if (isFullZero(matrix, i, cot - 2) == true)
+			if (isFullZero(matrix, i, cot - 1) == true)
 			{
 				a[soNghiemTuDo++] = 0;
 				n++;
 			}
-			else if (isFullZero(matrix, i, cot - 2) == false)
+			else if (isFullZero(matrix, i, cot - 1) == false)
 			{
 				dong = i;
+				if (CalcZero(matrix,cot-2,i) == cot - 2)
+				{
+					a[0] = (float)matrix[i][cot-1]/matrix[i][cot-2];
+					ChuoiNghiem[0] = to_string(a[0]);
+					isStartZero = true;
+					
+				}
+				else
+				{
+					ChuoiNghiem[0] = "u1";
+					a[0] = 0;
+					isStartZero = false;
+				}
 				break;
 			}
 
 		}
 
+	
+		int StartVarCol;
+		if (isStartZero == true)
+		{
+			for (int i = 1; i < slNghiem; i++)
+			{
+				//Gán chuỗi tại 1 trước vì tại 0 có thể xảy ra nhiều th đặc biệt
+				ChuoiNghiem[i] = "u" + to_string(i);
+				nghiemThuN++;
+			}
+			StartVarCol = cot - 3;
+		}
+		else
+		{
+			for (int i = 1; i < slNghiem; i++)
+			{
+				//Gán chuỗi tại 1 trước vì tại 0 có thể xảy ra nhiều th đặc biệt
+				ChuoiNghiem[i] = "u" + to_string(i+1);
+				nghiemThuN++;
+			}
+			//Vì biến cuối là hằng số nên không tồn tại hesoT tại đay
+			StartVarCol = cot - 2;
+		}
+
+
+
+
 		//Tại các dòng khác 0 thì ta bắt đầu gán biến cho từng hệ số
 		for (int i = dong; i >= 0; i--)
 		{
 			soluongHs = 0;
-
 			//Lấy ra các hệ số mà tại đó chứa biên tự do
-			for (c = cot - 2; c >= 0; c--)
+			for (c = StartVarCol; c >= 0; c--)
 			{
 				if (soluongHs == slNghiem)
 					break;
@@ -717,6 +763,7 @@ void TimNghiem(double** matrix, int dong, int cot)
 				soluongHs++;
 
 			}
+			
 			//Dành cho trường hợp 1 nghiệm tự do:
 			//Hệ số tại mỗi vị trí dòng sau khi đã lấy biến các dòng dưới.
 			//số t sau = he số cột hiện tại x số biến t lúc trước
@@ -772,7 +819,6 @@ void TimNghiem(double** matrix, int dong, int cot)
 						{
 							//Khi i == dong thì chưa cần cộng thêm các hệ số biến tại vì hệ số biến mới chỉ được khởi tạo tại đây
 							if (i == dong)
-
 							{
 								//Các lệnh if tránh xuất quá nhiều trường hợp thừa như 0*x làm xấu chương trình
 								if(hesoT[z] > 0)
@@ -814,13 +860,13 @@ void TimNghiem(double** matrix, int dong, int cot)
 		for (int i = nghiemThuN-1; i >=0 ; i--)
 		{
 			cout << setprecision(2);
-			cout << "Nghiem thu " << nghiemThuN-i<< ":"  << ChuoiNghiem[i] << "\n";
+			cout << "Nghiem thu " << nghiemThuN-i<< ":"  << ChuoiNghiem[i]<<  "\n";
 		}
 		delete[] a;
 	}
 }
 
-void Matrix::InRaNghiem()
+void Matrix::TimNghiemHePTTT()
 {
 	//Chuyển về ma trận bậc thang
 	double** matrixtemp;
@@ -833,9 +879,10 @@ void Matrix::InRaNghiem()
 	int cloneDong0 = 0;
 	if (pt < sobien)
 		cloneDong0 = sobien - pt;
-		
 	//Ta sẽ tạo với số biến + 1 tại vì thêm vào giá trị của mỗi phương trình nữa
 	CreateNewMatrix(matrixtemp , pt+ cloneDong0, sobien+1);
+
+
 	cout << "Nhap tuan tu cac he phuong trinh : " << endl;
 	//Gán bằng với matrix hiện tại của class:
 	for (int i = 0; i < pt; i++)
@@ -846,6 +893,7 @@ void Matrix::InRaNghiem()
 		}
 	}
 
+
 	for (int i = pt; i < pt+cloneDong0; i++)
 	{
 		for (int j = 0; j < sobien + 1; j++)
@@ -853,24 +901,30 @@ void Matrix::InRaNghiem()
 			matrixtemp[i][j] = 0;
 		}
 	}
+
+	//TH Đặc biệt
 	//Gọi hàm thay đổi thứ tự các dòng
 	SwapLine(matrixtemp, row, col);
 
 
 	//Gọi hàm chuyển về ma trận bậc thang
 	matrixtemp = ChuyenVeBacThang(matrixtemp, pt+cloneDong0, sobien+1);
-	/*for (int i = 0; i < pt + cloneDong0; i++)
+
+	//Khi quá thừa thải phương trình thì mình bỏ bớt số dòng full 0
+	if (pt > sobien)
 	{
-		for (int j = 0; j < sobien + 1; j++)
+		for (int i = pt-1; i >= 0; i--)
 		{
-			cout << matrixtemp[i][j] << "\t";
+			if (isFullZero(matrixtemp, i, sobien + 1))
+			{
+				pt--;
+				if (pt == sobien)
+					break;
+			}
 		}
-		cout << endl;
-	}*/
-
-	
-
+	}
 	//Tìm nghiệm:
+	cout << "Nghiem cua phuong trinh la : " << endl;
 	TimNghiem(matrixtemp, pt+cloneDong0 , sobien+1);
 
 	
@@ -928,7 +982,7 @@ void Matrix::MainMenu()
 			cout << Rank();
 			break;
 		case 6:
-			InRaNghiem();
+			TimNghiemHePTTT();
 			break;
 		default:
 			break;
@@ -941,4 +995,5 @@ void Matrix::MainMenu()
 
 Matrix::~Matrix()
 {
+
 }

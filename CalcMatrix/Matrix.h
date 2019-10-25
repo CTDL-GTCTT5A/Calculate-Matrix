@@ -19,7 +19,7 @@ public:
 	double** GetMatrix();
 
 	friend istream& operator>>(istream&, Matrix&);
-	friend ostream& operator<<(ostream&, Matrix);
+	friend ostream& operator<<(ostream&, const Matrix);
 
 	//Tính định thức
 	double Det(double**matrix,int cap);
@@ -36,9 +36,11 @@ public:
 
 	//Hạng của ma trận
 	int Rank();
+	//Hàm gọi lại tái sử dụng
+	static int Rank(double **matrix , int d , int c);
 
 	//He phuong trinh tuyen tinh
-	void InRaNghiem();
+	void TimNghiemHePTTT();
 
 
 	void MainMenu();
